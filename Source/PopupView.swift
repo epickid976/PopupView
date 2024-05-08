@@ -27,7 +27,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
          showContent: Bool,
          positionIsCalculatedCallback: @escaping () -> (),
          animationCompletedCallback: @escaping () -> (),
-         dismissCallback: @escaping (DismissSource)->()) {
+         dismissCallback: @escaping (DismissSource)->(), screenSize: CGSize = .zero) {
 
         self.type = params.type
         self.position = params.position ?? params.type.defaultPosition
@@ -40,6 +40,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
         self.dragToDismiss = params.dragToDismiss
         self.closeOnTap = params.closeOnTap
         self.isOpaque = params.isOpaque
+        self.customSize = screenSize
 
         self.view = view
 
@@ -171,11 +172,17 @@ public struct Popup<PopupContent: View>: ViewModifier {
 
         /// called when when dismiss animation ends
         var dismissCallback: (DismissSource) -> () = {_ in}
+    #if os(iOS)
+        var screenSize: CGSize = UIScreen.main.bounds.size
+    #endif
 
-        public func type(_ type: PopupType) -> PopupParameters {
-            var params = self
-            params.type = type
-            return params
+        public func type(_ type: PopupType, screenSize: CGSize = .zero) -> PopupParameters {
+          var params = self
+          params.type = type
+        #if os(iOS)
+          params.screenSize = screenSize
+#endif
+          return params
         }
 
         public func position(_ position: Position) -> PopupParameters {
@@ -510,10 +517,19 @@ public struct Popup<PopupContent: View>: ViewModifier {
     }
 
 #endif
-
+    var customSize: CGSize?
     var screenSize: CGSize {
 #if os(iOS)
-        return UIScreen.main.bounds.size
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if customSize != nil {
+                return customSize!
+            } else {
+                return UIScreen.main.bounds.size
+            }
+        }
+         else {
+            return UIScreen.main.bounds.size
+        }
 #elseif os(watchOS)
         return WKInterfaceDevice.current().screenBounds.size
 #else
