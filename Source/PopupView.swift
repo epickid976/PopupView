@@ -516,7 +516,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
     var screenSize: CGSize {
 #if os(iOS)
         if customScreenSize != nil {
-            return customScreenSize
+            return customScreenSize!
         } else {
             return UIScreen.main.bounds.size
         }
