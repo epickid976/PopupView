@@ -511,6 +511,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
     }
 
 #endif
+    
     var customScreenSize: CGSize?
     var screenSize: CGSize {
 #if os(iOS)
