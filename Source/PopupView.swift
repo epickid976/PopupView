@@ -542,7 +542,12 @@ public struct Popup<PopupContent: View>: ViewModifier {
     }
 
     private var screenHeight: CGFloat {
-        screenSize.height
+#if os(iOS)
+        return UIScreen.main.bounds.size.height
+#else
+        return screenSize.height
+#endif
+       
     }
 
     // MARK: - Content Builders
