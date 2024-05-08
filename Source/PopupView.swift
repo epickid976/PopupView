@@ -27,7 +27,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
          showContent: Bool,
          positionIsCalculatedCallback: @escaping () -> (),
          animationCompletedCallback: @escaping () -> (),
-         dismissCallback: @escaping (DismissSource)->()) {
+         dismissCallback: @escaping (DismissSource)->(), screenSize: CGSize) {
 
         self.type = params.type
         self.position = params.position ?? params.type.defaultPosition
@@ -48,6 +48,7 @@ public struct Popup<PopupContent: View>: ViewModifier {
         self.positionIsCalculatedCallback = positionIsCalculatedCallback
         self.animationCompletedCallback = animationCompletedCallback
         self.dismissCallback = dismissCallback
+        self.customScreenSize = screenSize
     }
 
     public enum PopupType {
@@ -510,10 +511,14 @@ public struct Popup<PopupContent: View>: ViewModifier {
     }
 
 #endif
-
+    var customScreenSize: CGSize?
     var screenSize: CGSize {
 #if os(iOS)
-        return UIScreen.main.bounds.size
+        if customScreenSize != nil {
+            return customScreenSize
+        } else {
+            return UIScreen.main.bounds.size
+        }
 #elseif os(watchOS)
         return WKInterfaceDevice.current().screenBounds.size
 #else
