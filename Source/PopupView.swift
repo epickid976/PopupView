@@ -521,11 +521,11 @@ public struct Popup<PopupContent: View>: ViewModifier {
 #endif
     }
 
-    private var screenWidth: CGFloat {
+    var screenWidth: CGFloat {
         screenSize.width
     }
 
-    private var screenHeight: CGFloat {
+    var screenHeight: CGFloat {
         screenSize.height
     }
 
